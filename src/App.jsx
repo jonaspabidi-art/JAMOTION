@@ -8,7 +8,7 @@ import AudioPanel from './components/AudioPanel'
 import { useStore } from './store'
 import styles from './App.module.css'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+const API = import.meta.env.PROD ? '' : 'http://localhost:3001'
 
 const TABS = [
   {

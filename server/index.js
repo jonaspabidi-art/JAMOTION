@@ -26,6 +26,7 @@ async function getBundle() {
   return bundled
 }
 
+app.use(express.static(join(__dirname, '../dist')))
 app.get('/health', (_req, res) => res.json({ ok: true }))
 
 app.post('/render', async (req, res) => {
@@ -65,5 +66,7 @@ app.post('/render', async (req, res) => {
     res.status(500).json({ error: err.message })
   }
 })
+
+app.get('*', (_req, res) => res.sendFile(join(__dirname, '../dist/index.html')))
 
 app.listen(PORT, () => console.log(`JAmotion server running on port ${PORT}`))
