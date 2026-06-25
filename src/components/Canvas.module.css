@@ -1,0 +1,54 @@
+.canvas {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 12px;
+  cursor: default;
+  user-select: none;
+}
+
+.layer {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layer:active { cursor: grabbing; }
+
+.layerImg {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+}
+
+.layerText {
+  white-space: pre-wrap;
+  text-align: center;
+  font-family: system-ui, sans-serif;
+  line-height: 1.2;
+  pointer-events: none;
+}
+
+.selectRing {
+  position: absolute;
+  inset: -4px;
+  border: 2px dashed rgba(124, 111, 255, 0.8);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.emptyHint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.2);
+  font-size: 14px;
+  pointer-events: none;
+}
