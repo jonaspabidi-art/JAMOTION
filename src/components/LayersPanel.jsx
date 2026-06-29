@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { useStore } from '../store'
+import { saveFile, deleteFile } from '../fileStore'
 import styles from './LayersPanel.module.css'
 
 export default function LayersPanel() {
@@ -12,12 +13,18 @@ export default function LayersPanel() {
 
   const imgInputRef = useRef(null)
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
+    const key = await saveFile(file)
     const url = URL.createObjectURL(file)
-    addLayer({ type: 'image', name: file.name.replace(/\.[^.]+$/, ''), src: url, width: 50, endTime: duration })
+    addLayer({ type: 'image', name: file.name.replace(/\.[^.]+$/, ''), src: url, srcKey: key, width: 50, endTime: duration })
     e.target.value = ''
+  }
+
+  const handleRemoveLayer = async (layer) => {
+    if (layer.srcKey) deleteFile(layer.srcKey)
+    removeLayer(layer.id)
   }
 
   return (
@@ -62,7 +69,7 @@ export default function LayersPanel() {
             </div>
             <button
               className={styles.removeBtn}
-              onClick={(e) => { e.stopPropagation(); removeLayer(layer.id) }}
+              onClick={(e) => { e.stopPropagation(); handleRemoveLayer(layer) }}
               title="Ta bort lager"
             >
               <svg width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">

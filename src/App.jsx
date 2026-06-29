@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { loadFile } from './fileStore'
 import Canvas from './components/Canvas'
 import Timeline from './components/Timeline'
 import LayersPanel from './components/LayersPanel'
@@ -29,7 +30,29 @@ export default function App() {
     layers, background, backgroundType, gradient, backgroundImage, duration,
     activeTemplateId, templateProps,
     setActiveTemplate, updateTemplateProp, clearTemplate,
+    audioKey, backgroundImageKey,
+    hydrateLayerSrc, hydrateAudioSrc, hydrateBackgroundImageSrc,
   } = useStore()
+
+  useEffect(() => {
+    async function hydrate() {
+      if (audioKey) {
+        const url = await loadFile(audioKey)
+        if (url) hydrateAudioSrc(url)
+      }
+      if (backgroundImageKey) {
+        const url = await loadFile(backgroundImageKey)
+        if (url) hydrateBackgroundImageSrc(url)
+      }
+      for (const layer of layers) {
+        if (layer.srcKey && !layer.src) {
+          const url = await loadFile(layer.srcKey)
+          if (url) hydrateLayerSrc(layer.id, url)
+        }
+      }
+    }
+    hydrate()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const activeTemplate = TEMPLATES.find((t) => t.id === activeTemplateId) ?? null
 

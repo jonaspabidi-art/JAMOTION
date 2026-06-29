@@ -1,22 +1,30 @@
 import { useRef } from 'react'
 import { useStore } from '../store'
+import { saveFile, deleteFile } from '../fileStore'
 import styles from './AudioPanel.module.css'
 
 export default function AudioPanel() {
   const audioSrc = useStore((s) => s.audioSrc)
   const audioName = useStore((s) => s.audioName)
   const audioVolume = useStore((s) => s.audioVolume)
+  const audioKey = useStore((s) => s.audioKey)
   const setAudio = useStore((s) => s.setAudio)
   const setAudioVolume = useStore((s) => s.setAudioVolume)
   const removeAudio = useStore((s) => s.removeAudio)
 
   const inputRef = useRef(null)
 
-  const handleUpload = (e) => {
+  const handleUpload = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    setAudio(URL.createObjectURL(file), file.name)
+    const key = await saveFile(file)
+    setAudio(URL.createObjectURL(file), file.name, key)
     e.target.value = ''
+  }
+
+  const handleRemove = () => {
+    if (audioKey) deleteFile(audioKey)
+    removeAudio()
   }
 
   return (
@@ -35,7 +43,7 @@ export default function AudioPanel() {
               <span className={styles.trackName}>{audioName}</span>
               <span className={styles.trackSub}>Laddad</span>
             </div>
-            <button className={styles.removeBtn} onClick={removeAudio} title="Ta bort ljud">
+            <button className={styles.removeBtn} onClick={handleRemove} title="Ta bort ljud">
               <svg width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
               </svg>

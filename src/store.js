@@ -10,6 +10,7 @@ export const useStore = create(
       background: '#0f0f0f',
       backgroundType: 'color',
       backgroundImage: null,
+      backgroundImageKey: null,
       gradient: { from: '#0f0f0f', to: '#1a0a2e', angle: 135 },
 
       duration: 5,
@@ -22,6 +23,7 @@ export const useStore = create(
       audioSrc: null,
       audioName: null,
       audioVolume: 0.8,
+      audioKey: null,
 
       activeTemplateId: null,
       templateProps: {},
@@ -32,6 +34,7 @@ export const useStore = create(
           type: 'image',
           name: 'Lager',
           src: null,
+          srcKey: null,
           text: 'Din text',
           fontSize: 48,
           textColor: '#ffffff',
@@ -61,11 +64,12 @@ export const useStore = create(
 
       setBackground: (value) => set({ background: value, backgroundType: 'color' }),
       setGradient: (gradient) => set({ gradient, backgroundType: 'gradient' }),
-      setBackgroundImage: (src) => set({ backgroundImage: src, backgroundType: 'image' }),
+      setBackgroundImage: (src, key = null) =>
+        set({ backgroundImage: src, backgroundType: 'image', backgroundImageKey: key }),
 
-      setAudio: (src, name) => set({ audioSrc: src, audioName: name }),
+      setAudio: (src, name, key = null) => set({ audioSrc: src, audioName: name, audioKey: key }),
       setAudioVolume: (v) => set({ audioVolume: v }),
-      removeAudio: () => set({ audioSrc: null, audioName: null }),
+      removeAudio: () => set({ audioSrc: null, audioName: null, audioKey: null }),
 
       setIsPlaying: (v) => set({ isPlaying: v }),
       setCurrentTime: (t) => set({ currentTime: Math.max(0, Math.min(t, get().duration)) }),
@@ -77,6 +81,12 @@ export const useStore = create(
       updateTemplateProp: (key, val) =>
         set((s) => ({ templateProps: { ...s.templateProps, [key]: val } })),
       clearTemplate: () => set({ activeTemplateId: null, templateProps: {} }),
+
+      // Hydration: called on startup to restore blob URLs from IndexedDB
+      hydrateLayerSrc: (id, src) =>
+        set((s) => ({ layers: s.layers.map((l) => (l.id === id ? { ...l, src } : l)) })),
+      hydrateAudioSrc: (src) => set({ audioSrc: src }),
+      hydrateBackgroundImageSrc: (src) => set({ backgroundImage: src }),
     }),
     {
       name: 'jamotion-store',
@@ -84,7 +94,12 @@ export const useStore = create(
         background: state.background,
         backgroundType: state.backgroundType,
         gradient: state.gradient,
+        backgroundImageKey: state.backgroundImageKey,
         duration: state.duration,
+        layers: state.layers.map((l) => ({ ...l, src: null })), // strip ephemeral blob URL
+        audioKey: state.audioKey,
+        audioName: state.audioName,
+        audioVolume: state.audioVolume,
         activeTemplateId: state.activeTemplateId,
         templateProps: state.templateProps,
       }),

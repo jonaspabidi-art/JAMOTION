@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { useStore } from '../store'
+import { saveFile } from '../fileStore'
 import styles from './BackgroundPanel.module.css'
 
 const SOLID_PRESETS = ['#0f0f0f', '#ffffff', '#1a0a2e', '#0a1628', '#1a1a1a', '#0d1117', '#2d1b69', '#1a0a0a']
@@ -27,10 +28,11 @@ export default function BackgroundPanel() {
 
   const bgImgRef = useRef(null)
 
-  const handleBgImage = (e) => {
+  const handleBgImage = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    setBackgroundImage(URL.createObjectURL(file))
+    const key = await saveFile(file)
+    setBackgroundImage(URL.createObjectURL(file), key)
     e.target.value = ''
   }
 
