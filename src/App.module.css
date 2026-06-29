@@ -1,25 +1,27 @@
+/* ── Base ── */
 .app {
   display: flex;
   flex-direction: column;
   height: 100dvh;
   overflow: hidden;
-  max-width: 480px;
-  margin: 0 auto;
+  background: var(--bg);
 }
 
+/* ── Header ── */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 14px;
-  height: 48px;
+  padding: 0 16px;
+  height: 52px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  z-index: 10;
 }
 
 .logo {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 800;
   letter-spacing: -0.04em;
   background: linear-gradient(135deg, #7c6fff 0%, #ff6f91 100%);
@@ -28,18 +30,34 @@
   background-clip: text;
 }
 
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.templateBadge {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--surface2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
 .exportBtn {
   display: flex;
   align-items: center;
   gap: 6px;
   background: var(--accent);
   color: #fff;
-  padding: 7px 14px;
+  padding: 8px 16px;
   font-size: 13px;
   font-weight: 600;
+  border-radius: 8px;
 }
 
-.exportBtn:hover { background: var(--accent-hover, #9a8fff); }
+.exportBtn:hover { background: #9a8fff; }
 
 .spinner {
   width: 14px;
@@ -49,22 +67,53 @@
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   display: inline-block;
+  flex-shrink: 0;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Body layout ── */
+.body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  /* Mobile: canvas on top, sidebar below */
+  flex-direction: column;
+}
+
+/* ── Canvas area ── */
+.canvasArea {
+  display: flex;
+  flex-direction: column;
+  /* Mobile: fixed height */
+  flex-shrink: 0;
 }
 
 .canvasWrap {
-  flex-shrink: 0;
+  flex: 1;
+  min-height: 0;
   padding: 12px 14px 0;
   background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
+/* ── Sidebar ── */
+.sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Tab nav (horizontal on mobile) ── */
 .tabs {
   display: flex;
+  flex-direction: row;
   background: var(--surface);
-  border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
@@ -93,8 +142,63 @@
   border-bottom-color: var(--accent);
 }
 
+/* ── Panel ── */
 .panel {
   flex: 1;
   overflow: hidden;
   background: var(--bg);
+}
+
+/* ═══════════════════════════════════════════════
+   DESKTOP (>= 768px): 2-column layout
+   Left: canvas + timeline
+   Right: sidebar (tabs + panels)
+═══════════════════════════════════════════════ */
+@media (min-width: 768px) {
+  .body {
+    flex-direction: row;
+  }
+
+  /* Canvas fills left side */
+  .canvasArea {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    border-right: 1px solid var(--border);
+    flex-shrink: 1;
+  }
+
+  .canvasWrap {
+    flex: 1;
+    padding: 24px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Sidebar is fixed width on the right */
+  .sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    border-top: none;
+    border-left: 1px solid var(--border);
+  }
+
+  /* Tabs stay horizontal across the sidebar top */
+  .tabs {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    font-size: 11px;
+    padding: 10px 4px;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   LARGE DESKTOP (>= 1200px): wider sidebar
+═══════════════════════════════════════════════ */
+@media (min-width: 1200px) {
+  .sidebar {
+    width: 360px;
+  }
 }
