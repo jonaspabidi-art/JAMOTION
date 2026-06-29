@@ -102,7 +102,11 @@ export default function App() {
         <div className={styles.canvasArea}>
           <div className={styles.canvasWrap}>
             {TemplateComp
-              ? <TemplateComp {...templateProps} />
+              ? (
+                <div className={styles.templateCanvas}>
+                  <TemplateComp {...templateProps} />
+                </div>
+              )
               : <Canvas />
             }
           </div>

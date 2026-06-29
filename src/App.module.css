@@ -149,6 +149,17 @@
   background: var(--bg);
 }
 
+/* ── Template canvas wrapper (same constraints as .canvas in Canvas.module.css) ── */
+.templateCanvas {
+  width: 100%;
+  max-width: min(100%, calc(100dvh - 220px));
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 12px;
+  flex-shrink: 0;
+  position: relative;
+}
+
 /* ═══════════════════════════════════════════════
    DESKTOP (>= 768px): 2-column layout
    Left: canvas + timeline

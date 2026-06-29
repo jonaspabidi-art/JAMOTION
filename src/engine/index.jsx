@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import React, { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback, startTransition } from 'react'
 
 // ── Easing ──────────────────────────────────────────────────────────────────
 export const Easing = {
@@ -106,10 +106,12 @@ export function Stage({ width = 1080, height = 1080, duration = 10, background =
       if (lastTsRef.current == null) lastTsRef.current = ts
       const dt = (ts - lastTsRef.current) / 1000
       lastTsRef.current = ts
-      setTime((t) => {
-        let next = t + dt
-        if (next >= duration) { if (loop) next = next % duration; else { next = duration; setPlaying(false) } }
-        return next
+      startTransition(() => {
+        setTime((t) => {
+          let next = t + dt
+          if (next >= duration) { if (loop) next = next % duration; else { next = duration; setPlaying(false) } }
+          return next
+        })
       })
       rafRef.current = requestAnimationFrame(step)
     }
