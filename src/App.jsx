@@ -8,6 +8,7 @@ import AudioPanel from './components/AudioPanel'
 import TemplateGallery from './components/TemplateGallery'
 import TemplateEditor from './components/TemplateEditor'
 import { useStore } from './store'
+import { TEMPLATES } from './templates'
 import styles from './App.module.css'
 
 const API = import.meta.env.PROD ? '' : 'http://localhost:3001'
@@ -23,18 +24,21 @@ const TABS = [
 export default function App() {
   const [activeTab, setActiveTab] = useState('templates')
   const [exporting, setExporting] = useState(false)
-  const [activeTemplate, setActiveTemplate] = useState(null)
-  const [templateProps, setTemplateProps] = useState({})
 
-  const { layers, background, backgroundType, gradient, backgroundImage, duration } = useStore()
+  const {
+    layers, background, backgroundType, gradient, backgroundImage, duration,
+    activeTemplateId, templateProps,
+    setActiveTemplate, updateTemplateProp, clearTemplate,
+  } = useStore()
+
+  const activeTemplate = TEMPLATES.find((t) => t.id === activeTemplateId) ?? null
 
   function handleSelectTemplate(t) {
-    setActiveTemplate(t)
-    setTemplateProps(t.defaultProps)
+    setActiveTemplate(t.id, t.defaultProps)
   }
 
   function handleTemplatePropChange(key, value) {
-    setTemplateProps((prev) => ({ ...prev, [key]: value }))
+    updateTemplateProp(key, value)
   }
 
   async function handleExport() {
@@ -64,7 +68,7 @@ export default function App() {
   const panelContent = (() => {
     if (activeTab === 'templates') {
       return activeTemplate
-        ? <TemplateEditor template={activeTemplate} props={templateProps} onChange={handleTemplatePropChange} onBack={() => setActiveTemplate(null)} />
+        ? <TemplateEditor template={activeTemplate} props={templateProps} onChange={handleTemplatePropChange} onBack={clearTemplate} />
         : <TemplateGallery onSelect={handleSelectTemplate} />
     }
     if (activeTab === 'layers')     return <LayersPanel />
